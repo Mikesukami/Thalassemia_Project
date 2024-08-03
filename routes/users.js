@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
+const bcrypt = require('bcrypt');
 const db = require('../util/db.config');
+const jwt = require('jsonwebtoken');
+require('dotenv').config(); // Ensure dotenv is loaded
+const verifyToken = require('../auth/verifyUser');
 
 // define variable
 const sequelize = db.sequelize;
@@ -13,17 +17,24 @@ router.get('/', function(req, res, next) {
 });
 
 //get all users
-router.get('/find/all', async (req, res, next) => {
+router.get('/find/all', verifyToken, async (req, res, next) => {
   console.log('body::==', req.body);
   console.log('params::==', req.params);
-  const users = await User.findAll();
 
-  res.send({
-    status: 200,
-    message: "success",
-    data: users
-  });
+  try {
+    const users = await User.findAll({
+      attributes: ['firstname', 'lastname', 'email'] // เลือกเฉพาะฟิลด์ที่ต้องการ
+    });
 
+    res.send({
+      status: 200,
+      message: "success",
+      data: users
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'An error occurred while fetching users' });
+  }
 });
 
 //create user
@@ -33,12 +44,29 @@ router.post('/create', async (req, res, next) => {
   const user = req.body;
   let newUser = null;
   if (user) {
-    newUser = await sequelize.transaction(function(t) {
-  
-      return User.create(user, { transaction: t });
-    });
+    try {
+      // เข้ารหัสรหัสผ่านก่อนบันทึก
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(user.password, salt);
+      user.password = hashedPassword;
+
+      newUser = await sequelize.transaction(function(t) {
+        return User.create(user, { transaction: t });
+      });
+
+      res.json({
+        status: 200,
+        message: "User created successfully",
+        data: newUser
+      });
+
+    } catch (error) {
+      console.error('Error creating user:', error);
+      res.status(500).json({ error: 'An error occurred while creating the user' });
+    }
+  } else {
+    res.status(400).json({ error: 'Invalid user data' });
   }
-  res.json(newUser);
 });
 
 //update user
@@ -128,6 +156,51 @@ router.delete('/delete/', async (req, res, next) => {
     console.error('Error deleting user:', error);
     res.status(500).json({ error: 'An error occurred while deleting the user' });
   }
+});
+
+// login user
+router.post('/login', async (req, res, next) => {
+  const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+    }
+
+    try {
+        const user = await User.findOne({ where: { username: username } });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+
+        if (user.user_status !== 'Approved') {
+            return res.status(403).json({ error: 'User not approved' });
+        }
+
+        // Create JWT token
+        const token = jwt.sign(
+            {
+                userId: user.userId,
+                username: user.username,
+                role: user.role, // Assuming you have a role field in your user model
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' } // Token expiration time
+        );
+
+        return res.status(200).json({
+            status: 'approved',
+            token: token,
+            message: 'Login successful',
+        });
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'An error occurred while logging in' });
+    }
 });
 
 

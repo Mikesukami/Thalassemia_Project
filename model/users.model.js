@@ -47,7 +47,25 @@ module.exports = (sequelize, Sequelize) => {
           field: 'updated_at',
           allowNull: false,
           defaultValue: Sequelize.NOW
+        },
+        role: {
+          type: Sequelize.STRING,
+          field: 'role',
+          allowNull: false,
+          defaultValue: 'user'
+        },
+        user_status: {
+          type: Sequelize.STRING,
+          field: 'user_status',
+          allowNull: false,
+          defaultValue: 'notApproved'
         }
+        // stat: {
+        //   type: sequelize.STRING,
+        //   field: 'status',
+        //   allowNull: false,
+        //   defaultValue: 'notApproved'
+        // }
       },
       {
         timestamps: true, // เปิดใช้งาน timestamps เพื่อเพิ่ม createdAt และ updatedAt
