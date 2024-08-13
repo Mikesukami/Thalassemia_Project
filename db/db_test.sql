@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 07, 2024 at 03:36 PM
+-- Generation Time: Aug 13, 2024 at 09:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,19 @@ SET time_zone = "+00:00";
 --
 -- Database: `db_test`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pictureslice`
+--
+
+CREATE TABLE `pictureslice` (
+  `picture_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `filename` varchar(100) CHARACTER SET utf32 COLLATE utf32_thai_520_w2 NOT NULL,
+  `uplode_at` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -54,11 +67,18 @@ INSERT INTO `user` (`user_id`, `firstname`, `lastname`, `email`, `username`, `pa
 (10003, 'เนตร', 'จิต', 'natnapa341@gmail.com', 'nnp', '140146', '2024-08-03 09:39:04', '2024-08-03 09:39:04', 'user', 'notApproved'),
 (10004, 'สมชาย', 'ชอบมาก', 'somchai@gmail.com', 'somchai', '123456', '2024-08-03 09:49:13', '2024-08-03 09:49:13', 'user', 'notApproved'),
 (10006, 'test', 'lastname', 'test@gmail.com', 'patiparn', '$2b$10$B2KrvZO7zJF2Jr6DvAvoceoUL7OIRk9DdjKdmXtcRdGlN5UjVt1pu', '2024-08-03 10:25:51', '2024-08-03 10:25:51', 'user', 'Approved'),
-(10007, 'Nanthira', 'Vongvichiankul', 'somehandsomeguy.com', 'Noirennel', '$2b$10$dD6aIbry/FH4eGBa2nzARuvvN25lv.17S1BWyEIkUchLCAFIg9r2i', '2024-08-05 03:18:03', '2024-08-05 03:18:03', 'user', 'notApproved');
+(10007, 'Nanthira', 'Vongvichiankul', 'somehandsomeguy.com', 'Noirennel', '$2b$10$dD6aIbry/FH4eGBa2nzARuvvN25lv.17S1BWyEIkUchLCAFIg9r2i', '2024-08-05 03:18:03', '2024-08-05 03:18:03', 'user', 'notApproved'),
+(10013, 'สุดหล่อ', 'สะท้านโลก', 'handsomemoreever@hotmail.com', 'Handsome_guy', '$2b$10$f.Sk3eaV0HxOrGUyZcBJgO2YPsa/wBq5oNFQTrt8FY5RJUzCJUIqq', '2024-08-13 03:55:47', '2024-08-13 03:55:47', 'user', 'Approved');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `pictureslice`
+--
+ALTER TABLE `pictureslice`
+  ADD PRIMARY KEY (`picture_id`);
 
 --
 -- Indexes for table `user`
@@ -79,10 +99,16 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `pictureslice`
+--
+ALTER TABLE `pictureslice`
+  MODIFY `picture_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10010;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10014;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
