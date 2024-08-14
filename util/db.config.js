@@ -20,5 +20,6 @@ db.sequelize = sequelize;
 //import model
 // db.blog = require('../model/blog.js')(sequelize, Sequelize);
 db.user = require('../model/users.model.js')(sequelize, Sequelize);
+db.media = require('../model/media.model.js')(sequelize, Sequelize);
 
 module.exports = db;

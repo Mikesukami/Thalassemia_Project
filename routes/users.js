@@ -5,6 +5,7 @@ const db = require('../util/db.config');
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // Ensure dotenv is loaded
 const verifyToken = require('../auth/verifyUser');
+const authUserToken = require('../functions/authUserToken');
 
 // define variable
 const sequelize = db.sequelize;
@@ -201,6 +202,28 @@ router.post('/login', async (req, res, next) => {
         console.error('Error during login:', error);
         res.status(500).json({ error: 'An error occurred while logging in' });
     }
+});
+
+router.get('/get_user_data', verifyToken, async (req, res) => {
+  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  
+  try {
+      const userData = await authUserToken(token);
+
+      return res.status(200).json({
+          status: 200,
+          message: "Get user data success!",
+          data: {
+              userId: userData.userId,
+              username: userData.username,
+              firstname: userData.firstname,
+              role: userData.role,
+          }
+      });
+  } catch (error) {
+      console.error('Error fetching user data:', error);
+      return res.status(500).json({ error: error.message });
+  }
 });
 
 

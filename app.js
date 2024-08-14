@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var picturesRouter = require('./routes/pictures');
 const db = require('./util/db.config'); // นำเข้า db.config
 const verifyToken = require('./auth/verifyUser')
 
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/pictures', picturesRouter);
 
 // ซิงโครไนซ์โมเดลกับฐานข้อมูล
 db.sequelize.sync({ force: false }) // ตั้งค่าเป็น true เพื่อดรอปตารางที่มีอยู่แล้วและสร้างใหม่
