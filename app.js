@@ -16,7 +16,11 @@ var port = 4000;
 var app = express();
 var cors = require('cors');
 
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allow all origins (for development purposes)
+  methods: ['GET', 'POST'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

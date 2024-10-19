@@ -24,7 +24,7 @@ router.get('/find/all', verifyToken, async (req, res, next) => {
 
   try {
     const users = await User.findAll({
-      attributes: ['firstname', 'lastname', 'email'] // เลือกเฉพาะฟิลด์ที่ต้องการ
+      attributes: ['user_id','firstname', 'lastname', 'email', 'role', 'user_status'] // เลือกเฉพาะฟิลด์ที่ต้องการ
     });
 
     res.send({
@@ -217,6 +217,7 @@ router.get('/get_user_data', verifyToken, async (req, res) => {
               userId: userData.userId,
               username: userData.username,
               firstname: userData.firstname,
+              lastname: userData.lastname,
               role: userData.role,
           }
       });
@@ -225,6 +226,71 @@ router.get('/get_user_data', verifyToken, async (req, res) => {
       return res.status(500).json({ error: error.message });
   }
 });
+
+// Approve user
+router.put('/approve', verifyToken, async (req, res, next) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'userId is required for approving user' });
+  }
+
+  try {
+    const user = await User.findOne({ where: { userId: userId } });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // อัปเดตสถานะเป็น Approved
+    user.user_status = 'Approved';
+
+    await user.save();
+
+    return res.status(200).json({
+      result: "success",
+      code: 200,
+      message: "User approved successfully",
+      data: user
+    });
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'An error occurred while approving the user' });
+  }
+});
+
+// Change user role
+router.put('/change-role', verifyToken, async (req, res, next) => {
+  const { userId, newRole } = req.body;
+
+  if (!userId || !newRole) {
+    return res.status(400).json({ error: 'userId and newRole are required for changing role' });
+  }
+
+  try {
+    const user = await User.findOne({ where: { userId: userId } });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // อัปเดตบทบาทของผู้ใช้
+    user.role = newRole;
+
+    await user.save();
+
+    return res.status(200).json({
+      result: "success",
+      code: 200,
+      message: "User role updated successfully",
+      data: user
+    });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    res.status(500).json({ error: 'An error occurred while updating the user role' });
+  }
+});
+
 
 
 module.exports = router;

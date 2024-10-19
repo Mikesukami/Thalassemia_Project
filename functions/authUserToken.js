@@ -22,6 +22,7 @@ const authUserToken = async (token) => {
             userId: user.userId,
             username: user.username,
             firstname: user.firstname,
+            lastname: user.lastname,
             role: user.role,
         };
     } catch (error) {
