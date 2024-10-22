@@ -21,5 +21,6 @@ db.sequelize = sequelize;
 // db.blog = require('../model/blog.js')(sequelize, Sequelize);
 db.user = require('../model/users.model.js')(sequelize, Sequelize);
 db.media = require('../model/media.model.js')(sequelize, Sequelize);
+db.predict = require('../model/predict.model.js')(sequelize, Sequelize);
 
 module.exports = db;
